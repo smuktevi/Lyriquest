@@ -17,6 +17,8 @@ from kivy.uix.popup import Popup
 from kivy.uix.image import Image
 from kivy.uix.relativelayout import RelativeLayout
 import wave
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+
 
 import kivy
 import pyaudio
@@ -432,111 +434,111 @@ class MenuScreen(Screen):
 		# 	version='2019-02-17',
 		# 	iam_apikey='6zSlji48p8DDphjnF_ZgfuU4pyP5PlXCk7LOEZq-YieR',
 		# 	url='https://gateway-lon.watsonplatform.net/tone-analyzer/api'
-		# )
-		from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
-		
-		authenticator = IAMAuthenticator('07LcRRjqMx-6e7iTD64yqkhCom4mAJIA8tJ9N_s8bUmr')
+		# )		
+		authenticator = IAMAuthenticator("6zSlji48p8DDphjnF_ZgfuU4pyP5PlXCk7LOEZq-YieR")
 		tone_analyzer = ToneAnalyzerV3(
 			version='2017-09-21',
 			authenticator=authenticator
 		)
-		tone_analyzer.set_service_url('https://api.us-east.tone-analyzer.watson.cloud.ibm.com')
+		tone_analyzer.set_service_url('https://gateway-lon.watsonplatform.net/tone-analyzer/api')
 		
 		##text = 'Team, I know that times are tough! Product '\
 		##  'sales have been disappointing for the past three '\
 		# 'quarters. We have a competitive product, but we '\
 		# 'need to do a better job of selling it!'
 
-		df=pd.read_csv('lyrics.csv',encoding='utf-8')
-		from sklearn.feature_extraction.text import TfidfVectorizer
-		stop_words=stopwords.words('english')
-		stop_words.extend(['one',
-		'yeah',
-		'yea',
-		'oh',
-		'get',
-		'got',
-		'let',
-		'go',
-		'would',
-		'could',
-		'no',
-		'for',
-		'say',
-		'nan',
-		'yo',
-		'de',
-		'ya',
-		'em',
-		'hey',
-		'put',
-		'ever',
-		'much',
-		'got',
-		'la',
-		'like',
-		'cause','chorus','x2','verse','2x','gonna','wanna','gotta','see','said','yes','give','well','tell','make','back','take'])
-		stop_words.extend(list(stopwords.words('french')))
-		stop_words.extend(list(stopwords.words('spanish')))
-		stop_words.extend(list(stopwords.words('danish')))
-		df.loc[df['index'] == 1, 'lyrics'] = new_text
-		vectorizer=TfidfVectorizer(stop_words=stop_words,min_df=0.04)
-		tfidf=vectorizer.fit_transform(df['lyrics'].apply(lambda tfidf: np.str_(tfidf)))
-		df.dropna(inplace=True)
-		nmf=NMF(n_components=5)
-		topic_values=nmf.fit_transform(tfidf)
-		topic_labels=[]
-		for topic_num, topic in enumerate(nmf.components_): 
-			message = "Topic #{}: ".format(topic_num + 1)
-			message += " ".join([vectorizer.get_feature_names()[i] for i in topic.argsort()[:-30 :-1]])
-			print(message)
-			if('know' in message and  'time' in message and  'never' in message and 'life' in message):
-				topic_labels.append('Life')
-			if('love' in message and 'heart' in message and 'true' in message and 'need' in message ):
-				topic_labels.append('Love')
-			if('baby' in message and 'want' in message and 'girl' in message and 'know' in message ):
-				topic_labels.append('Party')
-			if('die' in message and 'hand' in message and 'live' in message and 'life' in message):
-				topic_labels.append('Death&Negativity')	
-			if('come' in message and 'home' in message and 'us' in message and 'little'):
-				topic_labels.append('Travel&Home')	
-			message=''
+# here lyrics.csv is actually lyrics_to_tag::::
+# pickle in python
+		# df=pd.read_csv('lyrics.csv',encoding='utf-8')
+		# from sklearn.feature_extraction.text import TfidfVectorizer
+		# stop_words=stopwords.words('english')
+		# stop_words.extend(['one',
+		# 'yeah',
+		# 'yea',
+		# 'oh',
+		# 'get',
+		# 'got',
+		# 'let',
+		# 'go',
+		# 'would',
+		# 'could',
+		# 'no',
+		# 'for',
+		# 'say',
+		# 'nan',
+		# 'yo',
+		# 'de',
+		# 'ya',
+		# 'em',
+		# 'hey',
+		# 'put',
+		# 'ever',
+		# 'much',
+		# 'got',
+		# 'la',
+		# 'like',
+		# 'cause','chorus','x2','verse','2x','gonna','wanna','gotta','see','said','yes','give','well','tell','make','back','take'])
+		# stop_words.extend(list(stopwords.words('french')))
+		# stop_words.extend(list(stopwords.words('spanish')))
+		# stop_words.extend(list(stopwords.words('danish')))
+		# df.loc[df['index'] == 1, 'lyrics'] = new_text
+		# vectorizer=TfidfVectorizer(stop_words=stop_words,min_df=0.04)
+		# tfidf=vectorizer.fit_transform(df['lyrics'].apply(lambda tfidf: np.str_(tfidf)))
+		# df.dropna(inplace=True)
+		# nmf=NMF(n_components=5)
+		# topic_values=nmf.fit_transform(tfidf)
+		# topic_labels=[]
+		# for topic_num, topic in enumerate(nmf.components_): 
+		# 	message = "Topic #{}: ".format(topic_num + 1)
+		# 	message += " ".join([vectorizer.get_feature_names()[i] for i in topic.argsort()[:-30 :-1]])
+		# 	print(message)
+		# 	if('know' in message and  'time' in message and  'never' in message and 'life' in message):
+		# 		topic_labels.append('Life')
+		# 	if('love' in message and 'heart' in message and 'true' in message and 'need' in message ):
+		# 		topic_labels.append('Love')
+		# 	if('baby' in message and 'want' in message and 'girl' in message and 'know' in message ):
+		# 		topic_labels.append('Party')
+		# 	if('die' in message and 'hand' in message and 'live' in message and 'life' in message):
+		# 		topic_labels.append('Death&Negativity')	
+		# 	if('come' in message and 'home' in message and 'us' in message and 'little'):
+		# 		topic_labels.append('Travel&Home')	
+		# 	message=''
 
-			print(topic_labels)
-			print("\n")
-			#print([vectorizer.get_feature_names()[i] for i in topic.argsort()[:-30 :-1]])
-			#print("\n")
-		#topic_labels=['Life','Love','Death&Negativity','Party','Travel&Home']
-		df_topics=pd.DataFrame(topic_values, columns=topic_labels)
+		# 	print(topic_labels)
+		# 	print("\n")
+		# 	#print([vectorizer.get_feature_names()[i] for i in topic.argsort()[:-30 :-1]])
+		# 	#print("\n")
+		# #topic_labels=['Life','Love','Death&Negativity','Party','Travel&Home']
+		# df_topics=pd.DataFrame(topic_values, columns=topic_labels)
 
-		#print(df_topics.loc[[1]])
-		kk=df_topics.loc[[1]]
-		k_dict=list(kk.loc[1])
-		n = len(topic_labels)
+		# #print(df_topics.loc[[1]])
+		# kk=df_topics.loc[[1]]
+		# k_dict=list(kk.loc[1])
+		# n = len(topic_labels)
 	 
-		# Traverse through all array elements
-		for i in range(n):
+		# # Traverse through all array elements
+		# for i in range(n):
 	 
-			# Last i elements are already in place
-			for j in range(0, n-i-1):
+		# 	# Last i elements are already in place
+		# 	for j in range(0, n-i-1):
 	 
-				# traverse the array from 0 to n-i-1
-				# Swap if the element found is greater
-				# than the next element
-				if k_dict[j] < k_dict[j+1] :
-					k_dict[j], k_dict[j+1] = k_dict[j+1], k_dict[j]
-					topic_labels[j], topic_labels[j+1] = 	topic_labels[j+1], topic_labels[j]
-		print(k_dict)
-		print(topic_labels)
-		top_labels=topic_labels[0:2]
+		# 		# traverse the array from 0 to n-i-1
+		# 		# Swap if the element found is greater
+		# 		# than the next element
+		# 		if k_dict[j] < k_dict[j+1] :
+		# 			k_dict[j], k_dict[j+1] = k_dict[j+1], k_dict[j]
+		# 			topic_labels[j], topic_labels[j+1] = 	topic_labels[j+1], topic_labels[j]
+		# print(k_dict)
+		# print(topic_labels)
+		# top_labels=topic_labels[0:2]
 
-		top_labels = "\n".join(top_labels)
+		# top_labels = "\n".join(top_labels)
 
 		text = new_text
 
 		tone_analysis = tone_analyzer.tone(
 			{'text': text},
-			'application/json'
+			content_type = 'application/json'
 		).get_result()
 		final_res = "Title:" + title + "\n" + "Artist:" + artist_name+"\n"+"The tones identified are:"+'\n'
 		#print(tone_analysis)
@@ -548,9 +550,9 @@ class MenuScreen(Screen):
 			final_res+="\n"+dummy
 
 		dummy=''
-		final_res+='\n'+"The topics extracted are:"+"\n"+top_labels 
-		print(final_res)
-		pass
+		# final_res+='\n'+"The topics extracted are:"+"\n"+top_labels 
+		# print(final_res)
+		# pass
 
 
 
@@ -709,17 +711,21 @@ def get_playlist_tones(playlist):#top_songs):
 		except:
 			print("\nSONG NOT FOUND\n")
 			continue
+		# authenticator = IAMAuthenticator('07LcRRjqMx-6e7iTD64yqkhCom4mAJIA8tJ9N_s8bUmr')
+		authenticator = IAMAuthenticator('6zSlji48p8DDphjnF_ZgfuU4pyP5PlXCk7LOEZq-YieR')
 		tone_analyzer = ToneAnalyzerV3(
-			version='2019-02-17',
-			iam_apikey='6zSlji48p8DDphjnF_ZgfuU4pyP5PlXCk7LOEZq-YieR',
-			url='https://gateway-lon.watsonplatform.net/tone-analyzer/api'
+			version='2017-09-21',
+			authenticator=authenticator
 		)
+		# tone_analyzer.set_service_url('https://api.us-east.tone-analyzer.watson.cloud.ibm.com')
+		tone_analyzer.set_service_url('https://gateway-lon.watsonplatform.net/tone-analyzer/api')
 		text = lyr
 		if(len(lyr)==0):
 			continue
+
 		tone_analysis = tone_analyzer.tone(
 			{'text': text},
-			'application/json'
+			content_type = 'application/json'
 		).get_result()
 		print(i)
 		tone = tone_analysis['document_tone']['tones']
