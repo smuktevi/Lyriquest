@@ -27,7 +27,7 @@ from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 import json
-from watson_developer_cloud import ToneAnalyzerV3
+from ibm_watson import ToneAnalyzerV3
 
 import urllib
 import lxml.html
@@ -43,7 +43,7 @@ import os, sys, json
 import pandas as pd
 import numpy as np
 import urllib
-from watson_developer_cloud import ToneAnalyzerV3
+from ibm_watson import ToneAnalyzerV3
 from sklearn.preprocessing import MinMaxScaler
 import nltk
 import pandas as pd
@@ -388,14 +388,26 @@ class MenuScreen(Screen):
 				Audio: mp3, wav, m4a, flac, aac, amr, ape, ogg ...
 				Video: mp4, mkv, wmv, flv, ts, avi ...'''
 			re = ACRCloudRecognizer(config1)
-
+			# print(sys.argv[1])
+#HARD CODED SHAPE OF YOU HEREEE!!!!!
 			# recognize by file path, and skip 0 seconds from from the beginning of sys.argv[1].
 			#  print(re.recognize_by_file(sys.argv[1], 0))
-			res = re.recognize_by_file(sys.argv[1], 0)
-			a = json.loads(res)
+			try:
+				res = re.recognize_by_file('output.wav', 0)
+				a = json.loads(res)
+			
+				title = a['metadata']['music'][0]['title']
+				artist_name = a['metadata']['music'][0]['artists'][0]['name']
+				print("\n \n Song recognized \n \n")
+				self.manager.current='results'
+			except Exception as e:
+				print("\n Song not recognized \n ")
+				return
+			# res = re.recognize_by_file("shape.mp3", 0)
+			# a = json.loads(res)
 
-			title = a['metadata']['music'][0]['title']
-			artist_name = a['metadata']['music'][0]['artists'][0]['name']
+			# title = a['metadata']['music'][0]['title']
+			# artist_name = a['metadata']['music'][0]['artists'][0]['name']
 
 		import requests
 		from requests.auth import HTTPBasicAuth
@@ -416,12 +428,20 @@ class MenuScreen(Screen):
 		new_text = re.sub('<br/>', '\n', p)
 		print(new_text)
 
+		# tone_analyzer = ToneAnalyzerV3(
+		# 	version='2019-02-17',
+		# 	iam_apikey='6zSlji48p8DDphjnF_ZgfuU4pyP5PlXCk7LOEZq-YieR',
+		# 	url='https://gateway-lon.watsonplatform.net/tone-analyzer/api'
+		# )
+		from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+		
+		authenticator = IAMAuthenticator('07LcRRjqMx-6e7iTD64yqkhCom4mAJIA8tJ9N_s8bUmr')
 		tone_analyzer = ToneAnalyzerV3(
-			version='2019-02-17',
-			iam_apikey='6zSlji48p8DDphjnF_ZgfuU4pyP5PlXCk7LOEZq-YieR',
-			url='https://gateway-lon.watsonplatform.net/tone-analyzer/api'
+			version='2017-09-21',
+			authenticator=authenticator
 		)
-
+		tone_analyzer.set_service_url('https://api.us-east.tone-analyzer.watson.cloud.ibm.com')
+		
 		##text = 'Team, I know that times are tough! Product '\
 		##  'sales have been disappointing for the past three '\
 		# 'quarters. We have a competitive product, but we '\
@@ -573,7 +593,7 @@ class ResultsScreen(Screen):
 		all_words = re.sub(r'[\(\[].*?[\)\]]', '', all_words)
 
 		all_words = os.linesep.join([s for s in all_words.splitlines() if s])
-		print (all_words)
+		print(all_words)
 		f = open('lyrics_for_sent_cleaned.txt', 'wb')
 		f.write(all_words.encode('utf-8'))
 
